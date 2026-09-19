@@ -25,3 +25,7 @@ The project passes the TypeScript check with no implicit `any`.
 .map() on Null State
 
 ![TypeScript error](./src/assets/null-state-bug.png)
+
+.wrong value
+
+![TypeScript error](./src/assets/wrong-valu-bug.png)

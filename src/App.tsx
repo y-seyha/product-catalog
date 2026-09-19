@@ -95,9 +95,7 @@ const initialProducts: Product[] = [
 ];
 
 function App() {
-  // const [products, setProducts] = useState<Product[] | null>(initialProducts);
-  // AFTER (Bug planted):
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const [products, setProducts] = useState<Product[] | null>(initialProducts);
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
 
   const [form, setForm] = useState<FormDraft>({ name: "", price: "" });
@@ -203,21 +201,18 @@ function App() {
             </div>
           </div>
         </header>
-
-        {/* --Seed Bug  */}
+        // BUG PLANTED: Passing 'item' instead of 'product'
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {displayedProducts.map((product) => (
+            <ProductCard key={product.id} item={product} />
           ))}
         </section>
-
         {/* --Solutions  */}
         {/* <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {displayedProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </section> */}
-
         <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm max-w-lg">
           <h2 className="text-xl font-bold text-slate-900 mb-4">
             Add New Product
