@@ -1,4 +1,4 @@
-import { type FormEvent, type ChangeEvent, useState } from "react";
+import { type FormEvent, type ChangeEvent, useState, useEffect } from "react";
 
 export interface Product {
   id: number;
@@ -73,33 +73,44 @@ function ProductCard({ product }: ProductCardProps) {
   );
 }
 
-const initialProducts: Product[] = [
-  {
-    id: 1,
-    name: "Laptop",
-    price: 1200,
-    inStock: true,
-    onSale: true,
-    category: "Electronics",
-  },
-  { id: 2, name: "Wireless Mouse", price: 35, inStock: true, onSale: false },
-  {
-    id: 3,
-    name: "Keyboard",
-    price: 80,
-    inStock: false,
-    onSale: true,
-    category: "Peripherals",
-  },
-  { id: 4, name: "Monitor", price: 300, inStock: true, onSale: false },
-];
-
 function App() {
-  const [products, setProducts] = useState<Product[] | null>(initialProducts);
-  const [inStockOnly, setInStockOnly] = useState<boolean>(false);
+  const [products, setProducts] = useState<Product[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
+  const [inStockOnly, setInStockOnly] = useState<boolean>(false);
   const [form, setForm] = useState<FormDraft>({ name: "", price: "" });
   const [errors, setErrors] = useState<FormErrors>({ name: "", price: "" });
+
+  useEffect(() => {
+    async function loadProducts() {
+      setLoading(true);
+      setFetchError(null);
+
+      try {
+        const response = await fetch("https://dummyjson.com/porducts");
+
+        if (!response.ok) {
+          throw new Error(
+            `HTTP Error ${response.status}: Failed to load endpoint.`,
+          );
+        }
+
+        const data = await response.json();
+        setProducts(data.products);
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Failed to load products.";
+        console.error("Network Fetch Error:", err);
+        setFetchError(message);
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProducts();
+  }, []);
 
   const safeProducts = products ?? [];
 
@@ -152,7 +163,6 @@ function App() {
       return;
     }
 
-    // Prepare product payload using PublicProduct (no ID required yet)
     const publicData: PublicProduct = createPublicProductPayload(form);
 
     const newProduct: Product = {
@@ -201,18 +211,26 @@ function App() {
             </div>
           </div>
         </header>
-        // BUG PLANTED: Passing 'item' instead of 'product'
+
+        {loading && (
+          <p className="text-sm text-slate-500">
+            Loading catalog from server...
+          </p>
+        )}
+
+        {fetchError && (
+          <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+            <strong>Network Error:</strong> {fetchError} (Check the Network tab
+            in DevTools!)
+          </div>
+        )}
+
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {displayedProducts.map((product) => (
-            <ProductCard key={product.id} item={product} />
-          ))}
-        </section>
-        {/* --Solutions  */}
-        {/* <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {displayedProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
-        </section> */}
+        </section>
+
         <section className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm max-w-lg">
           <h2 className="text-xl font-bold text-slate-900 mb-4">
             Add New Product
