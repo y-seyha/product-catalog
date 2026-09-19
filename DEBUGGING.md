@@ -29,3 +29,9 @@ The project passes the TypeScript check with no implicit `any`.
 .wrong value
 
 ![TypeScript error](./src/assets/wrong-valu-bug.png)
+
+.Network Error
+
+![TypeScript error](./src/assets/page.png)
+
+![TypeScript error](./src/assets/network-error.png)
