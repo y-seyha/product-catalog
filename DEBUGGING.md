@@ -35,3 +35,5 @@ The project passes the TypeScript check with no implicit `any`.
 ![TypeScript error](./src/assets/page.png)
 
 ![TypeScript error](./src/assets/network-error.png)
+
+I used **Chrome DevTools** to debug all three bugs—the debugger helped trace the null `.map()` crash, inspect the wrong value, and identify the failed network request, while the console alone did not provide enough context to trace each problem to its source.
